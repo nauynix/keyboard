@@ -104,35 +104,15 @@ void tapDanceAction(uint8_t tapDanceIndex, KeyAddr key_addr, uint8_t tapCount, k
                                   Key_Pipe,
                                   Key_Backslash);
     case LPB:
-    {
-        if (tapCount < 3)
-        {
-            return tapDanceActionKeys(tapCount, tapDanceAction,
-                                      Key_LeftBracket,
-                                      Key_LeftParen);
-        }
-        else
-        {
-            if (tapDanceAction == kaleidoscope::plugin::TapDance::Release)
-                return Unicode.type(0x300c);
-            return;
-        }
-    }
+        return tapDanceActionKeys(tapCount, tapDanceAction,
+                                  Key_LeftParen,
+                                  Key_LeftBracket,
+                                  Key_LCB);
     case RPB:
-    {
-        if (tapCount < 3)
-        {
-            return tapDanceActionKeys(tapCount, tapDanceAction,
-                                      Key_RightBracket,
-                                      Key_RightParen);
-        }
-        else
-        {
-            if (tapDanceAction == kaleidoscope::plugin::TapDance::Release)
-                return Unicode.type(0x300d);
-            return;
-        }
-    }
+        return tapDanceActionKeys(tapCount, tapDanceAction,
+                                  Key_RightParen,
+                                  Key_RightBracket,
+                                  Key_RCB);
 
     case MNP:
         return tapDanceActionKeys(tapCount, tapDanceAction,
@@ -147,28 +127,25 @@ void tapDanceAction(uint8_t tapDanceIndex, KeyAddr key_addr, uint8_t tapCount, k
     }
 }
 
-/* This comment temporarily turns off astyle's indent enforcement
- *   so we can make the keymaps actually resemble the physical key layout better
- */
 // clang-format off
 
 KEYMAPS(
 
   [PRIMARY] = KEYMAP_STACKED
-  (Key_F11,         Key_LCB,        Key_AT    ,     Key_STAR   ,Key_DOLLR , Key_CARET,  ___,
+  (Key_F11,         ___,            Key_EXCLM,      Key_AT    , Key_HASH,   Key_DOLLR,  ___,
    Key_Backtick,    Key_Quote,      Key_Comma,      Key_Period, Key_P,      Key_Y,      TD(LPB),
    Key_Tab,         Key_A,          Key_O,          Key_E,      Key_U,      Key_I,
-   TD(VOLD),         Key_Slash,  Key_Q,          Key_J,      Key_K,      Key_X,      Key_Semicolon,
+   TD(VOLD),        Key_Slash,      Key_Q,          Key_J,      Key_K,      Key_X,      Key_Semicolon,
 
    OSM(LeftControl), Key_Backspace,  OSM(LeftShift),  Key_Escape,
    ShiftToLayer(FUNCTION),
 
-   ___,         Key_PRCNT,  Key_EXCLM,      Key_HASH,   Key_AND,    Key_RCB,        LockLayer(NUMPAD),
+   ___,         Key_PRCNT,  Key_CARET,Key_AND,Key_STAR, ___,     ___,
    TD(RPB),     Key_F,      Key_G, Key_C,   Key_R,      Key_L,      Key_Backslash,
                 Key_D,      Key_H, Key_T,   Key_N,      Key_S,      Key_Equals,
    Key_Minus,   Key_B,      Key_M, Key_W,   Key_V,      Key_Z,      ___,
-   ___,         Key_Enter,  Key_Spacebar,   OSM(LeftAlt),
-   ShiftToLayer(FUNCTION)),
+   Key_Tab,         Key_Enter,  Key_Spacebar,   OSM(LeftAlt),
+   ShiftToLayer(NUMPAD)),
 
 
   [NUMPAD] =  KEYMAP_STACKED
@@ -179,10 +156,10 @@ KEYMAPS(
    ___, ___, ___, ___,
    ___,
 
-   M(MACRO_VERSION_INFO),  ___, Key_7, Key_8,      Key_9,              Key_KeypadSubtract, ___,
-   ___,                    ___, Key_4, Key_5,      Key_6,              Key_KeypadAdd,      ___,
-                           ___, Key_1, Key_2,      Key_3,              Key_Equals,         ___,
-   ___,                    ___, Key_0, Key_Period, Key_KeypadMultiply, Key_KeypadDivide,   Key_Enter,
+   ___,  ___,  ___  , ___  , ___  , ___, ___,
+   ___,  ___,  Key_1, Key_2, Key_3, ___, ___,
+         Key_0,Key_4, Key_5, Key_6, ___, ___,
+   ___,  ___,  Key_7, Key_8, Key_9, ___, ___,
    ___, ___, ___, ___,
    ___),
 
@@ -204,6 +181,70 @@ KEYMAPS(
 
 /* Re-enable astyle's indent enforcement */
 // clang-format on
+
+
+
+// Colors names of the EGA palette, for convenient use in colormaps. Should
+// match the palette definition below. Optional, one can just use the indexes
+// directly, too.
+enum {
+  BLACK,
+  BLUE,
+  GREEN,
+  CYAN,
+  RED,
+  MAGENTA,
+  BROWN,
+  LIGHT_GRAY,
+  DARK_GRAY,
+  BRIGHT_BLUE,
+  BRIGHT_GREEN,
+  BRIGHT_CYAN,
+  BRIGHT_RED,
+  BRIGHT_MAGENTA,
+  YELLOW,
+  WHITE
+};
+
+// Define an EGA palette. Conveniently, that's exactly 16 colors, just like the
+// limit of LEDPaletteTheme.
+PALETTE(
+    CRGB(0x00, 0x00, 0x00),  // [0x0] black
+    CRGB(0x00, 0x00, 0xaa),  // [0x1] blue
+    CRGB(0x00, 0xaa, 0x00),  // [0x2] green
+    CRGB(0x00, 0xaa, 0xaa),  // [0x3] cyan
+    CRGB(0xaa, 0x00, 0x00),  // [0x4] red
+    CRGB(0xaa, 0x00, 0xaa),  // [0x5] magenta
+    CRGB(0xaa, 0x55, 0x00),  // [0x6] brown
+    CRGB(0xaa, 0xaa, 0xaa),  // [0x7] light gray
+    CRGB(0x55, 0x55, 0x55),  // [0x8] dark gray
+    CRGB(0x55, 0x55, 0xff),  // [0x9] bright blue
+    CRGB(0x55, 0xff, 0x55),  // [0xa] bright green
+    CRGB(0x55, 0xff, 0xff),  // [0xb] bright cyan
+    CRGB(0xff, 0x55, 0x55),  // [0xc] bright red
+    CRGB(0xff, 0x55, 0xff),  // [0xd] bright magenta
+    CRGB(0xff, 0xff, 0x55),  // [0xe] yellow
+    CRGB(0xff, 0xff, 0xff)   // [0xf] white
+)
+
+COLORMAPS(
+    [0] = COLORMAP_STACKED
+    (BLACK,   GREEN, GREEN, GREEN, GREEN, GREEN, BLUE,
+     MAGENTA, CYAN,  CYAN,  CYAN,  CYAN,  CYAN,  RED,
+     BROWN,   CYAN,  CYAN,  CYAN,  CYAN,  CYAN,
+     BROWN,   CYAN,  CYAN,  CYAN,  CYAN,  CYAN,  RED,
+
+     LIGHT_GRAY, RED, LIGHT_GRAY, LIGHT_GRAY,
+     BLACK,
+
+     BLACK,      BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BLACK,
+     BRIGHT_RED, BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_CYAN,  YELLOW,
+                 BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_RED,   BRIGHT_RED,
+     BLACK,      BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_RED,   BRIGHT_RED,   BRIGHT_RED,   BRIGHT_RED,
+
+     DARK_GRAY, BRIGHT_RED, DARK_GRAY, DARK_GRAY,
+     BLACK)
+)
 
 /** versionInfoMacro handles the 'firmware version info' macro
  *  When a key bound to the macro is pressed, this macro
@@ -238,14 +279,11 @@ static void anyKeyMacro(KeyEvent &event)
 
 /** macroAction dispatches keymap events that are tied to a macro
     to that macro. It takes two uint8_t parameters.
-
     The first is the macro being called (the entry in the 'enum' earlier in this file).
     The second is the state of the keyswitch. You can use the keyswitch state to figure out
     if the key has just been toggled on, is currently pressed or if it's just been released.
-
     The 'switch' statement should have a 'case' for each entry of the macro enum.
     Each 'case' statement should call out to a function to handle the macro in question.
-
  */
 
 const macro_t *macroAction(uint8_t macro_id, KeyEvent &event)
@@ -517,6 +555,8 @@ void setup()
     // maps for. To make things simple, we set it to eight layers, which is how
     // many editable layers we have (see above).
     ColormapEffect.max_layers(8);
+    ColormapEffect.activate();    
+    DefaultColormap.setup();
 
     // For Dynamic Macros, we need to reserve storage space for the editable
     // macros. A kilobyte is a reasonable default.

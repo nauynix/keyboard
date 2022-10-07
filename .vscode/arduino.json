@@ -1,0 +1,6 @@
+{
+    "port": "COM6",
+    "configuration": "upload_method=dfuUtilMethod",
+    "board": "keyboardio:gd32:keyboardio_model_100",
+    "sketch": "keyboard.ino"
+}
