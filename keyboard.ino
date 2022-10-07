@@ -144,7 +144,7 @@ KEYMAPS(
    TD(RPB),     Key_F,      Key_G, Key_C,   Key_R,      Key_L,      Key_Backslash,
                 Key_D,      Key_H, Key_T,   Key_N,      Key_S,      Key_Equals,
    Key_Minus,   Key_B,      Key_M, Key_W,   Key_V,      Key_Z,      ___,
-   Key_Tab,         Key_Enter,  Key_Spacebar,   OSM(LeftAlt),
+   ___,         Key_Enter,  Key_Spacebar,   OSM(LeftAlt),
    ShiftToLayer(NUMPAD)),
 
 
