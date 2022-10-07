@@ -14,7 +14,6 @@
 #include "Kaleidoscope-MouseKeys.h"
 #include "Kaleidoscope-Macros.h"
 #include "Kaleidoscope-LEDControl.h"
-#include "Kaleidoscope-NumPad.h"
 #include "Kaleidoscope-LEDEffect-BootGreeting.h"
 #include "Kaleidoscope-LED-Palette-Theme.h"
 #include "Kaleidoscope-Colormap.h"
@@ -411,10 +410,6 @@ KALEIDOSCOPE_INIT_PLUGINS(
     // The Colormap effect makes it possible to set up per-layer colormaps
     ColormapEffect,
 
-    // The numpad plugin is responsible for lighting up the 'numpad' mode
-    // with a custom LED effect
-    NumPad,
-
     // The macros plugin adds support for macros
     Macros,
 
@@ -469,10 +464,6 @@ void setup()
     // Set the hue of the boot greeting effect to something that will result in a
     // nice green color.
     BootGreetingEffect.hue = 85;
-
-    // While we hope to improve this in the future, the NumPad plugin
-    // needs to be explicitly told which keymap layer is your numpad layer
-    NumPad.numPadLayer = NUMPAD;
 
     // Set the action key the test mode should listen for to Left Fn
     HardwareTestMode.setActionKey(R3C6);
