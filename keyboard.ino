@@ -16,12 +16,6 @@
 #include "Kaleidoscope-LEDControl.h"
 #include "Kaleidoscope-NumPad.h"
 #include "Kaleidoscope-LEDEffect-BootGreeting.h"
-#include "Kaleidoscope-LEDEffect-SolidColor.h"
-#include "Kaleidoscope-LEDEffect-Breathe.h"
-#include "Kaleidoscope-LEDEffect-Chase.h"
-#include "Kaleidoscope-LEDEffect-Rainbow.h"
-#include "Kaleidoscope-LED-Stalker.h"
-#include "Kaleidoscope-LED-AlphaSquare.h"
 #include "Kaleidoscope-LED-Palette-Theme.h"
 #include "Kaleidoscope-Colormap.h"
 #include "Kaleidoscope-IdleLEDs.h"
@@ -302,18 +296,6 @@ const macro_t *macroAction(uint8_t macro_id, KeyEvent &event)
     return MACRO_NONE;
 }
 
-// These 'solid' color effect definitions define a rainbow of
-// LED color modes calibrated to draw 500mA or less on the
-// Keyboardio Model 100.
-
-static kaleidoscope::plugin::LEDSolidColor solidRed(160, 0, 0);
-static kaleidoscope::plugin::LEDSolidColor solidOrange(140, 70, 0);
-static kaleidoscope::plugin::LEDSolidColor solidYellow(130, 100, 0);
-static kaleidoscope::plugin::LEDSolidColor solidGreen(0, 160, 0);
-static kaleidoscope::plugin::LEDSolidColor solidBlue(0, 70, 130);
-static kaleidoscope::plugin::LEDSolidColor solidIndigo(0, 0, 170);
-static kaleidoscope::plugin::LEDSolidColor solidViolet(130, 0, 120);
-
 /** toggleLedsOnSuspendResume toggles the LEDs off when the host goes to sleep,
  * and turns them back on when it wakes up.
  */
@@ -422,37 +404,6 @@ KALEIDOSCOPE_INIT_PLUGINS(
     // We start with the LED effect that turns off all the LEDs.
     LEDOff,
 
-    // The rainbow effect changes the color of all of the keyboard's keys at the same time
-    // running through all the colors of the rainbow.
-    LEDRainbowEffect,
-
-    // The rainbow wave effect lights up your keyboard with all the colors of a rainbow
-    // and slowly moves the rainbow across your keyboard
-    LEDRainbowWaveEffect,
-
-    // The chase effect follows the adventure of a blue pixel which chases a red pixel across
-    // your keyboard. Spoiler: the blue pixel never catches the red pixel
-    LEDChaseEffect,
-
-    // These static effects turn your keyboard's LEDs a variety of colors
-    solidRed,
-    solidOrange,
-    solidYellow,
-    solidGreen,
-    solidBlue,
-    solidIndigo,
-    solidViolet,
-
-    // The breathe effect slowly pulses all of the LEDs on your keyboard
-    LEDBreatheEffect,
-
-    // The AlphaSquare effect prints each character you type, using your
-    // keyboard's LEDs as a display
-    AlphaSquareEffect,
-
-    // The stalker effect lights up the keys you've pressed recently
-    StalkerEffect,
-
     // The LED Palette Theme plugin provides a shared palette for other plugins,
     // like Colormap below
     LEDPaletteTheme,
@@ -523,21 +474,8 @@ void setup()
     // needs to be explicitly told which keymap layer is your numpad layer
     NumPad.numPadLayer = NUMPAD;
 
-    // We configure the AlphaSquare effect to use RED letters
-    AlphaSquare.color = CRGB(255, 0, 0);
-
-    // We set the brightness of the rainbow effects to 150 (on a scale of 0-255)
-    // This draws more than 500mA, but looks much nicer than a dimmer effect
-    LEDRainbowEffect.brightness(255);
-    LEDRainbowWaveEffect.brightness(255);
-
     // Set the action key the test mode should listen for to Left Fn
     HardwareTestMode.setActionKey(R3C6);
-
-    // The LED Stalker mode has a few effects. The one we like is called
-    // 'BlazingTrail'. For details on other options, see
-    // https://github.com/keyboardio/Kaleidoscope/blob/master/docs/plugins/LED-Stalker.md
-    StalkerEffect.variant = STALKER(BlazingTrail);
 
     // We want to make sure that the firmware starts with LED effects off
     // This avoids over-taxing devices that don't have a lot of power to share
