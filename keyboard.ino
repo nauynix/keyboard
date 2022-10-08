@@ -32,25 +32,6 @@
 #include "Kaleidoscope-LEDEffect-FunctionalColor.h"
 kaleidoscope::plugin::LEDFunctionalColor::FunctionalColor funColor;
 
-/** This 'enum' is a list of all the macros used by the Model 100's firmware
- * The names aren't particularly important. What is important is that each
- * is unique.
- *
- * These are the names of your macros. They'll be used in two places.
- * The first is in your keymap definitions. There, you'll use the syntax
- * `M(MACRO_NAME)` to mark a specific keymap position as triggering `MACRO_NAME`
- *
- * The second usage is in the 'switch' statement in the `macroAction` function.
- * That switch statement actually runs the code associated with a macro when
- * a macro key is pressed.
- */
-
-enum
-{
-    MACRO_VERSION_INFO,
-    MACRO_ANY,
-};
-
 enum
 {
     PRIMARY,
@@ -273,62 +254,6 @@ COLORMAPS(
 /* Re-enable astyle's indent enforcement */
 // clang-format on
 
-/** versionInfoMacro handles the 'firmware version info' macro
- *  When a key bound to the macro is pressed, this macro
- *  prints out the firmware build information as virtual keystrokes
- */
-
-static void versionInfoMacro(uint8_t key_state)
-{
-    if (keyToggledOn(key_state))
-    {
-        Macros.type(PSTR("Keyboardio Model 100 - Kaleidoscope "));
-        Macros.type(PSTR(BUILD_INFORMATION));
-    }
-}
-
-/** anyKeyMacro is used to provide the functionality of the 'Any' key.
- *
- * When the 'any key' macro is toggled on, a random alphanumeric key is
- * selected. While the key is held, the function generates a synthetic
- * keypress event repeating that randomly selected key.
- *
- */
-
-static void anyKeyMacro(KeyEvent &event)
-{
-    if (keyToggledOn(event.state))
-    {
-        event.key.setKeyCode(Key_A.getKeyCode() + (uint8_t)(millis() % 36));
-        event.key.setFlags(0);
-    }
-}
-
-/** macroAction dispatches keymap events that are tied to a macro
-    to that macro. It takes two uint8_t parameters.
-    The first is the macro being called (the entry in the 'enum' earlier in this file).
-    The second is the state of the keyswitch. You can use the keyswitch state to figure out
-    if the key has just been toggled on, is currently pressed or if it's just been released.
-    The 'switch' statement should have a 'case' for each entry of the macro enum.
-    Each 'case' statement should call out to a function to handle the macro in question.
- */
-
-const macro_t *macroAction(uint8_t macro_id, KeyEvent &event)
-{
-    switch (macro_id)
-    {
-
-    case MACRO_VERSION_INFO:
-        versionInfoMacro(event.state);
-        break;
-
-    case MACRO_ANY:
-        anyKeyMacro(event);
-        break;
-    }
-    return MACRO_NONE;
-}
-
 /** toggleLedsOnSuspendResume toggles the LEDs off when the host goes to sleep,
  * and turns them back on when it wakes up.
  */
@@ -356,51 +281,6 @@ void hostPowerManagementEventHandler(kaleidoscope::plugin::HostPowerManagement::
     toggleLedsOnSuspendResume(event);
 }
 
-/** This 'enum' is a list of all the magic combos used by the Model 100's
- * firmware The names aren't particularly important. What is important is that
- * each is unique.
- *
- * These are the names of your magic combos. They will be used by the
- * `USE_MAGIC_COMBOS` call below.
- */
-enum
-{
-    // Toggle between Boot (6-key rollover; for BIOSes and early boot) and NKRO
-    // mode.
-    COMBO_TOGGLE_NKRO_MODE,
-    // Enter test mode
-    COMBO_ENTER_TEST_MODE
-};
-
-/** Wrappers, to be used by MagicCombo. **/
-
-/**
- * This simply toggles the keyboard protocol via USBQuirks, and wraps it within
- * a function with an unused argument, to match what MagicCombo expects.
- */
-static void toggleKeyboardProtocol(uint8_t combo_index)
-{
-    USBQuirks.toggleKeyboardProtocol();
-}
-
-/**
- *  This enters the hardware test mode
- */
-static void enterHardwareTestMode(uint8_t combo_index)
-{
-    HardwareTestMode.runTests();
-}
-
-/** Magic combo list, a list of key combo and action pairs the firmware should
- * recognise.
- */
-USE_MAGIC_COMBOS({.action = toggleKeyboardProtocol,
-                  // Left Fn + Esc + Shift
-                  .keys = {R3C6, R2C6, R3C7}},
-                 {.action = enterHardwareTestMode,
-                  // Left Fn + Prog + LED
-                  .keys = {R3C6, R0C0, R0C6}});
-
 // First, tell Kaleidoscope which plugins you want to use.
 // The order can be important. For example, LED effects are
 // added in the order they're listed here.
@@ -427,10 +307,6 @@ KALEIDOSCOPE_INIT_PLUGINS(
     // keyboard is first connected
     BootGreetingEffect,
 
-    // The hardware test mode, which can be invoked by tapping Prog, LED and the
-    // left Fn button at the same time.
-    HardwareTestMode,
-
     // LEDControl provides support for other LED modes
     LEDControl,
 
@@ -441,31 +317,12 @@ KALEIDOSCOPE_INIT_PLUGINS(
     // The Colormap effect makes it possible to set up per-layer colormaps
     ColormapEffect,
 
-    // The macros plugin adds support for macros
-    Macros,
-
     // The MouseKeys plugin lets you add keys to your keymap which move the mouse.
     MouseKeys,
 
     // The HostPowerManagement plugin allows us to turn LEDs off when then host
     // goes to sleep, and resume them when it wakes up.
     HostPowerManagement,
-
-    // The MagicCombo plugin lets you use key combinations to trigger custom
-    // actions - a bit like Macros, but triggered by pressing multiple keys at the
-    // same time.
-    MagicCombo,
-
-    // The USBQuirks plugin lets you do some things with USB that we aren't
-    // comfortable - or able - to do automatically, but can be useful
-    // nevertheless. Such as toggling the key report protocol between Boot (used
-    // by BIOSes) and Report (NKRO).
-    USBQuirks,
-
-    // The Qukeys plugin enables the "Secondary action" functionality in
-    // Chrysalis. Keys with secondary actions will have their primary action
-    // performed when tapped, but the secondary action when held.
-    Qukeys,
 
     // Enables the "Sticky" behavior for modifiers, and the "Layer shift when
     // held" functionality for layer keys.
@@ -476,9 +333,6 @@ KALEIDOSCOPE_INIT_PLUGINS(
     // Turns LEDs off after a configurable amount of idle time.
     IdleLEDs,
     PersistentIdleLEDs,
-
-    // Enables dynamic, Chrysalis-editable macros.
-    DynamicMacros,
 
     ActiveModColorEffect,
     TapDance,
@@ -498,9 +352,6 @@ void setup()
     // nice green color.
     BootGreetingEffect.hue = 85;
 
-    // Set the action key the test mode should listen for to Left Fn
-    HardwareTestMode.setActionKey(R3C6);
-
     // We want to make sure that the firmware starts with LED effects off
     // This avoids over-taxing devices that don't have a lot of power to share
     // with USB devices
@@ -519,10 +370,6 @@ void setup()
     ColormapEffect.max_layers(8);
     ColormapEffect.activate();
     DefaultColormap.setup();
-
-    // For Dynamic Macros, we need to reserve storage space for the editable
-    // macros. A kilobyte is a reasonable default.
-    DynamicMacros.reserve_storage(1024);
 }
 
 /** loop is the second of the standard Arduino sketch functions.
