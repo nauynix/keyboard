@@ -29,6 +29,8 @@
 #include <Kaleidoscope-LED-ActiveModColor.h>
 #include <Kaleidoscope-TapDance.h>
 #include <Kaleidoscope-Unicode.h>
+#include "Kaleidoscope-LEDEffect-FunctionalColor.h"
+kaleidoscope::plugin::LEDFunctionalColor::FunctionalColor funColor;
 
 /** This 'enum' is a list of all the macros used by the Model 100's firmware
  * The names aren't particularly important. What is important is that each
@@ -56,14 +58,14 @@ enum
     FUNCTION,
 }; // layers
 
-#define Key_AT LSHIFT(Key_2)
-#define Key_STAR LSHIFT(Key_8)
-#define Key_DOLLR LSHIFT(Key_4)
-#define Key_CARET LSHIFT(Key_6)
-#define Key_PRCNT LSHIFT(Key_5)
 #define Key_EXCLM LSHIFT(Key_1)
+#define Key_AT LSHIFT(Key_2)
 #define Key_HASH LSHIFT(Key_3)
+#define Key_DOLLR LSHIFT(Key_4)
+#define Key_PRCNT LSHIFT(Key_5)
+#define Key_CARET LSHIFT(Key_6)
 #define Key_AND LSHIFT(Key_7)
+#define Key_STAR LSHIFT(Key_8)
 #define Key_LCB LSHIFT(Key_LeftBracket)
 #define Key_RCB LSHIFT(Key_RightBracket)
 #define Key_Plus LSHIFT(Key_Equals)
@@ -120,6 +122,50 @@ void tapDanceAction(uint8_t tapDanceIndex, KeyAddr key_addr, uint8_t tapCount, k
     }
 }
 
+// Colors names of the EGA palette, for convenient use in colormaps. Should
+// match the palette definition below. Optional, one can just use the indexes
+// directly, too.
+enum
+{
+    BLACK,
+    BLUE,
+    GREEN,
+    CYAN,
+    RED,
+    MAGENTA,
+    BROWN,
+    LIGHT_GRAY,
+    DARK_GRAY,
+    BRIGHT_BLUE,
+    BRIGHT_GREEN,
+    BRIGHT_CYAN,
+    BRIGHT_RED,
+    BRIGHT_MAGENTA,
+    YELLOW,
+    WHITE
+};
+
+// Define an EGA palette. Conveniently, that's exactly 16 colors, just like the
+// limit of LEDPaletteTheme.
+PALETTE(
+    CRGB(0x00, 0x00, 0x00), // [0x0] black
+    CRGB(0x00, 0x00, 0xaa), // [0x1] blue
+    CRGB(0x00, 0xaa, 0x00), // [0x2] green
+    CRGB(0x00, 0xaa, 0xaa), // [0x3] cyan
+    CRGB(0xaa, 0x00, 0x00), // [0x4] red
+    CRGB(0xaa, 0x00, 0xaa), // [0x5] magenta
+    CRGB(0xaa, 0x55, 0x00), // [0x6] brown
+    CRGB(0xaa, 0xaa, 0xaa), // [0x7] light gray
+    CRGB(0x55, 0x55, 0x55), // [0x8] dark gray
+    CRGB(0x55, 0x55, 0xff), // [0x9] bright blue
+    CRGB(0x55, 0xff, 0x55), // [0xa] bright green
+    CRGB(0x55, 0xff, 0xff), // [0xb] bright cyan
+    CRGB(0xff, 0x55, 0x55), // [0xc] bright red
+    CRGB(0xff, 0x55, 0xff), // [0xd] bright magenta
+    CRGB(0xff, 0xff, 0x55), // [0xe] yellow
+    CRGB(0xff, 0xff, 0xff)  // [0xf] white
+)
+
 // clang-format off
 
 KEYMAPS(
@@ -128,7 +174,7 @@ KEYMAPS(
   (Key_F11,         ___,            Key_EXCLM,      Key_AT    , Key_HASH,   Key_DOLLR,  ___,
    Key_Backtick,    Key_Quote,      Key_Comma,      Key_Period, Key_P,      Key_Y,      TD(LPB),
    Key_Tab,         Key_A,          Key_O,          Key_E,      Key_U,      Key_I,
-   TD(VOLD),        Key_Slash,      Key_Q,          Key_J,      Key_K,      Key_X,      Key_Semicolon,
+   TD(VOLD),        Key_Semicolon,      Key_Q,          Key_J,      Key_K,      Key_X,      Key_Slash,
 
    OSM(LeftControl), Key_Backspace,  OSM(LeftShift),  Key_Escape,
    ShiftToLayer(FUNCTION),
@@ -170,54 +216,6 @@ KEYMAPS(
    Key_PcApplication,          Consumer_Mute,          Consumer_VolumeDecrement, Consumer_VolumeIncrement, ___,             Key_Backslash,    Key_Pipe,
    ___, ___, Key_Enter, ___,
    ___)
-) // KEYMAPS(
-
-/* Re-enable astyle's indent enforcement */
-// clang-format on
-
-
-
-// Colors names of the EGA palette, for convenient use in colormaps. Should
-// match the palette definition below. Optional, one can just use the indexes
-// directly, too.
-enum {
-  BLACK,
-  BLUE,
-  GREEN,
-  CYAN,
-  RED,
-  MAGENTA,
-  BROWN,
-  LIGHT_GRAY,
-  DARK_GRAY,
-  BRIGHT_BLUE,
-  BRIGHT_GREEN,
-  BRIGHT_CYAN,
-  BRIGHT_RED,
-  BRIGHT_MAGENTA,
-  YELLOW,
-  WHITE
-};
-
-// Define an EGA palette. Conveniently, that's exactly 16 colors, just like the
-// limit of LEDPaletteTheme.
-PALETTE(
-    CRGB(0x00, 0x00, 0x00),  // [0x0] black
-    CRGB(0x00, 0x00, 0xaa),  // [0x1] blue
-    CRGB(0x00, 0xaa, 0x00),  // [0x2] green
-    CRGB(0x00, 0xaa, 0xaa),  // [0x3] cyan
-    CRGB(0xaa, 0x00, 0x00),  // [0x4] red
-    CRGB(0xaa, 0x00, 0xaa),  // [0x5] magenta
-    CRGB(0xaa, 0x55, 0x00),  // [0x6] brown
-    CRGB(0xaa, 0xaa, 0xaa),  // [0x7] light gray
-    CRGB(0x55, 0x55, 0x55),  // [0x8] dark gray
-    CRGB(0x55, 0x55, 0xff),  // [0x9] bright blue
-    CRGB(0x55, 0xff, 0x55),  // [0xa] bright green
-    CRGB(0x55, 0xff, 0xff),  // [0xb] bright cyan
-    CRGB(0xff, 0x55, 0x55),  // [0xc] bright red
-    CRGB(0xff, 0x55, 0xff),  // [0xd] bright magenta
-    CRGB(0xff, 0xff, 0x55),  // [0xe] yellow
-    CRGB(0xff, 0xff, 0xff)   // [0xf] white
 )
 
 COLORMAPS(
@@ -236,8 +234,44 @@ COLORMAPS(
      BLACK,      BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_RED,   BRIGHT_RED,   BRIGHT_RED,   BRIGHT_RED,
 
      DARK_GRAY, BRIGHT_RED, DARK_GRAY, DARK_GRAY,
-     BLACK)
-)
+     BLACK),
+
+    [1] = COLORMAP_STACKED
+    (BLACK, GREEN, GREEN, GREEN, GREEN, GREEN, BLUE,
+    MAGENTA, CYAN, CYAN, CYAN, CYAN, CYAN, RED,
+    BROWN, CYAN, CYAN, CYAN, CYAN, CYAN,
+    BROWN, CYAN, CYAN, CYAN, CYAN, CYAN, RED,
+
+    LIGHT_GRAY, RED, LIGHT_GRAY, LIGHT_GRAY,
+    BLACK,
+
+    BLACK, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BLACK,
+    BRIGHT_RED, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, YELLOW,
+    BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_RED, BRIGHT_RED,
+    BLACK, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_RED, BRIGHT_RED, BRIGHT_RED, BRIGHT_RED,
+
+    DARK_GRAY, BRIGHT_RED, DARK_GRAY, DARK_GRAY,
+    BLACK),
+
+    [2] = COLORMAP_STACKED
+    (BLACK, GREEN, GREEN, GREEN, GREEN, GREEN, BLUE,
+    MAGENTA, CYAN, CYAN, CYAN, CYAN, CYAN, RED,
+    BROWN, CYAN, CYAN, CYAN, CYAN, CYAN,
+    BROWN, CYAN, CYAN, CYAN, CYAN, CYAN, RED,
+
+    LIGHT_GRAY, RED, LIGHT_GRAY, LIGHT_GRAY,
+    BLACK,
+
+    BLACK, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BLACK,
+    BRIGHT_RED, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, YELLOW,
+    BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_RED, BRIGHT_RED,
+    BLACK, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_RED, BRIGHT_RED, BRIGHT_RED, BRIGHT_RED,
+
+    DARK_GRAY, BRIGHT_RED, DARK_GRAY, DARK_GRAY,
+    BLACK))
+
+/* Re-enable astyle's indent enforcement */
+// clang-format on
 
 /** versionInfoMacro handles the 'firmware version info' macro
  *  When a key bound to the macro is pressed, this macro
@@ -400,9 +434,6 @@ KALEIDOSCOPE_INIT_PLUGINS(
     // LEDControl provides support for other LED modes
     LEDControl,
 
-    // We start with the LED effect that turns off all the LEDs.
-    LEDOff,
-
     // The LED Palette Theme plugin provides a shared palette for other plugins,
     // like Colormap below
     LEDPaletteTheme,
@@ -450,7 +481,9 @@ KALEIDOSCOPE_INIT_PLUGINS(
     DynamicMacros,
 
     ActiveModColorEffect,
-    TapDance);
+    TapDance,
+
+    funColor);
 
 /** The 'setup' function is one of the two standard Arduino sketch functions.
  * It's called when your keyboard first powers up. This is where you set up
@@ -484,7 +517,7 @@ void setup()
     // maps for. To make things simple, we set it to eight layers, which is how
     // many editable layers we have (see above).
     ColormapEffect.max_layers(8);
-    ColormapEffect.activate();    
+    ColormapEffect.activate();
     DefaultColormap.setup();
 
     // For Dynamic Macros, we need to reserve storage space for the editable
