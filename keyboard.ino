@@ -8,24 +8,18 @@
 #endif
 
 #include "Kaleidoscope.h"
-#include "Kaleidoscope-EEPROM-Settings.h"
-#include "Kaleidoscope-EEPROM-Keymap.h"
-#include "Kaleidoscope-FocusSerial.h"
 #include "Kaleidoscope-MouseKeys.h"
 #include "Kaleidoscope-Macros.h"
 #include "Kaleidoscope-LEDControl.h"
 #include "Kaleidoscope-LEDEffect-BootGreeting.h"
-#include "Kaleidoscope-LED-Palette-Theme.h"
-#include "Kaleidoscope-Colormap.h"
 #include "Kaleidoscope-IdleLEDs.h"
 #include "Kaleidoscope-HostPowerManagement.h"
 #include "Kaleidoscope-OneShot.h"
 #include "Kaleidoscope-Escape-OneShot.h"
 #include <Kaleidoscope-LED-ActiveModColor.h>
 #include <Kaleidoscope-TapDance.h>
-#include <Kaleidoscope-Unicode.h>
 #include "Kaleidoscope-LEDEffect-FunctionalColor.h"
-kaleidoscope::plugin::LEDFunctionalColor::FunctionalColor funColor;
+using namespace kaleidoscope::plugin::LEDFunctionalColor;
 
 enum
 {
@@ -105,50 +99,6 @@ void tapDanceAction(uint8_t tapDanceIndex, KeyAddr key_addr, uint8_t tapCount, k
     }
 }
 
-// Colors names of the EGA palette, for convenient use in colormaps. Should
-// match the palette definition below. Optional, one can just use the indexes
-// directly, too.
-enum
-{
-    BLACK,
-    BLUE,
-    GREEN,
-    CYAN,
-    RED,
-    MAGENTA,
-    BROWN,
-    LIGHT_GRAY,
-    DARK_GRAY,
-    BRIGHT_BLUE,
-    BRIGHT_GREEN,
-    BRIGHT_CYAN,
-    BRIGHT_RED,
-    BRIGHT_MAGENTA,
-    YELLOW,
-    WHITE
-};
-
-// Define an EGA palette. Conveniently, that's exactly 16 colors, just like the
-// limit of LEDPaletteTheme.
-PALETTE(
-    CRGB(0x00, 0x00, 0x00), // [0x0] black
-    CRGB(0x00, 0x00, 0xaa), // [0x1] blue
-    CRGB(0x00, 0xaa, 0x00), // [0x2] green
-    CRGB(0x00, 0xaa, 0xaa), // [0x3] cyan
-    CRGB(0xaa, 0x00, 0x00), // [0x4] red
-    CRGB(0xaa, 0x00, 0xaa), // [0x5] magenta
-    CRGB(0xaa, 0x55, 0x00), // [0x6] brown
-    CRGB(0xaa, 0xaa, 0xaa), // [0x7] light gray
-    CRGB(0x55, 0x55, 0x55), // [0x8] dark gray
-    CRGB(0x55, 0x55, 0xff), // [0x9] bright blue
-    CRGB(0x55, 0xff, 0x55), // [0xa] bright green
-    CRGB(0x55, 0xff, 0xff), // [0xb] bright cyan
-    CRGB(0xff, 0x55, 0x55), // [0xc] bright red
-    CRGB(0xff, 0x55, 0xff), // [0xd] bright magenta
-    CRGB(0xff, 0xff, 0x55), // [0xe] yellow
-    CRGB(0xff, 0xff, 0xff)  // [0xf] white
-)
-
 // clang-format off
 
 KEYMAPS(
@@ -202,25 +152,6 @@ KEYMAPS(
    ___)
 )
 
-COLORMAPS(
-    [0] = COLORMAP_STACKED
-    (MAGENTA,   BLACK, GREEN, GREEN, GREEN, GREEN, BLUE,
-     RED, CYAN,  CYAN,  CYAN,  CYAN,  CYAN,  YELLOW,
-     RED,    CYAN,  CYAN,  CYAN,  CYAN,  CYAN,
-     BROWN,   CYAN,  CYAN,  CYAN,  CYAN,  CYAN,  RED,
-
-     BLUE, YELLOW, MAGENTA, WHITE,
-     BLACK,
-
-     BLACK,  GREEN, GREEN, GREEN, GREEN, BLACK, BLACK,
-     YELLOW, CYAN,  CYAN,  CYAN,  CYAN,  CYAN,  RED,
-             CYAN,  CYAN,  CYAN,  CYAN,  CYAN,  RED,
-     RED,    CYAN,  CYAN,  CYAN,  CYAN,  CYAN,   BLACK,
-
-     WHITE, MAGENTA,YELLOW, BLUE,
-     BLACK),
-)
-
 /* Re-enable astyle's indent enforcement */
 // clang-format on
 
@@ -251,13 +182,14 @@ void hostPowerManagementEventHandler(kaleidoscope::plugin::HostPowerManagement::
     toggleLedsOnSuspendResume(event);
 }
 
-KALEIDOSCOPE_INIT_PLUGINS(
-    EEPROMSettings,
-    EEPROMKeymap,
-    Focus,
-    FocusSettingsCommand,
-    FocusEEPROMCommand,
+FunctionalColor funColor(255, Fruit);
 
+struct myTheme : public colorMapFruit
+{
+    // FC_MAP_COLOR(alpha, cyan)
+};
+
+KALEIDOSCOPE_INIT_PLUGINS(
     // The boot greeting effect pulses the LED button for 10 seconds after the
     // keyboard is first connected
     BootGreetingEffect,
@@ -265,12 +197,7 @@ KALEIDOSCOPE_INIT_PLUGINS(
     // LEDControl provides support for other LED modes
     LEDControl,
 
-    // The LED Palette Theme plugin provides a shared palette for other plugins,
-    // like Colormap below
-    LEDPaletteTheme,
-
-    // The Colormap effect makes it possible to set up per-layer colormaps
-    ColormapEffect,
+    funColor,
 
     // The MouseKeys plugin lets you add keys to your keymap which move the mouse.
     MouseKeys,
@@ -287,12 +214,9 @@ KALEIDOSCOPE_INIT_PLUGINS(
 
     // Turns LEDs off after a configurable amount of idle time.
     IdleLEDs,
-    PersistentIdleLEDs,
 
     ActiveModColorEffect,
-    TapDance,
-
-    funColor);
+    TapDance);
 
 void setup()
 {
@@ -305,19 +229,7 @@ void setup()
 
     LEDOff.activate();
 
-    // To make the keymap editable without flashing new firmware, we store
-    // additional layers in EEPROM. For now, we reserve space for eight layers. If
-    // one wants to use these layers, just set the default layer to one in EEPROM,
-    // by using the `settings.defaultLayer` Focus command, or by using the
-    // `keymap.onlyCustom` command to use EEPROM layers only.
-    EEPROMKeymap.setup(8);
-
-    // We need to tell the Colormap plugin how many layers we want to have custom
-    // maps for. To make things simple, we set it to eight layers, which is how
-    // many editable layers we have (see above).
-    ColormapEffect.max_layers(1);
-    ColormapEffect.activate();
-    DefaultColormap.setup();
+    // FC_SET_THEME(funColor, myTheme);
 }
 
 void loop()
