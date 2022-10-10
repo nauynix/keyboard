@@ -18,14 +18,9 @@
 #include "Kaleidoscope-LED-Palette-Theme.h"
 #include "Kaleidoscope-Colormap.h"
 #include "Kaleidoscope-IdleLEDs.h"
-#include "Kaleidoscope-HardwareTestMode.h"
 #include "Kaleidoscope-HostPowerManagement.h"
-#include "Kaleidoscope-MagicCombo.h"
-#include "Kaleidoscope-USB-Quirks.h"
-#include "Kaleidoscope-Qukeys.h"
 #include "Kaleidoscope-OneShot.h"
 #include "Kaleidoscope-Escape-OneShot.h"
-#include "Kaleidoscope-DynamicMacros.h"
 #include <Kaleidoscope-LED-ActiveModColor.h>
 #include <Kaleidoscope-TapDance.h>
 #include <Kaleidoscope-Unicode.h>
@@ -66,6 +61,7 @@ enum
     MUS,   // -/_
     BTT,   // `/~
     PGT,   // ./>
+    COPY,  // Ctrl-c,v,x
 };
 
 void tapDanceAction(uint8_t tapDanceIndex, KeyAddr key_addr, uint8_t tapCount, kaleidoscope::plugin::TapDance::ActionType tapDanceAction)
@@ -100,6 +96,12 @@ void tapDanceAction(uint8_t tapDanceIndex, KeyAddr key_addr, uint8_t tapCount, k
                                   Consumer_VolumeDecrement,
                                   Consumer_VolumeIncrement,
                                   Key_Mute);
+
+    case COPY:
+        return tapDanceActionKeys(tapCount, tapDanceAction,
+                                  LCTRL(Key_C),
+                                  LCTRL(Key_V),
+                                  LCTRL(Key_X));
     }
 }
 
@@ -152,10 +154,10 @@ PALETTE(
 KEYMAPS(
 
   [PRIMARY] = KEYMAP_STACKED
-  (Key_F11,         ___,            Key_EXCLM,      Key_AT    , Key_HASH,   Key_DOLLR,  ___,
+  (Key_F11,         ___,            Key_EXCLM,      Key_AT    , Key_HASH,   Key_DOLLR,  TD(COPY),
    Key_Backtick,    Key_Quote,      Key_Comma,      Key_Period, Key_P,      Key_Y,      TD(LPB),
    Key_Tab,         Key_A,          Key_O,          Key_E,      Key_U,      Key_I,
-   TD(VOLD),        Key_Semicolon,      Key_Q,          Key_J,      Key_K,      Key_X,      Key_Slash,
+   TD(VOLD),        Key_Semicolon,  Key_Q,          Key_J,      Key_K,      Key_X,      Key_Slash,
 
    OSM(LeftControl), Key_Backspace,  OSM(LeftShift),  Key_Escape,
    ShiftToLayer(FUNCTION),
@@ -164,6 +166,7 @@ KEYMAPS(
    TD(RPB),     Key_F,      Key_G, Key_C,   Key_R,      Key_L,      Key_Backslash,
                 Key_D,      Key_H, Key_T,   Key_N,      Key_S,      Key_Equals,
    Key_Minus,   Key_B,      Key_M, Key_W,   Key_V,      Key_Z,      ___,
+
    ___,         Key_Enter,  Key_Spacebar,   OSM(LeftAlt),
    ShiftToLayer(NUMPAD)),
 
@@ -201,55 +204,22 @@ KEYMAPS(
 
 COLORMAPS(
     [0] = COLORMAP_STACKED
-    (BLACK,   GREEN, GREEN, GREEN, GREEN, GREEN, BLUE,
-     MAGENTA, CYAN,  CYAN,  CYAN,  CYAN,  CYAN,  RED,
-     BROWN,   CYAN,  CYAN,  CYAN,  CYAN,  CYAN,
+    (MAGENTA,   BLACK, GREEN, GREEN, GREEN, GREEN, BLUE,
+     RED, CYAN,  CYAN,  CYAN,  CYAN,  CYAN,  YELLOW,
+     RED,    CYAN,  CYAN,  CYAN,  CYAN,  CYAN,
      BROWN,   CYAN,  CYAN,  CYAN,  CYAN,  CYAN,  RED,
 
-     LIGHT_GRAY, RED, LIGHT_GRAY, LIGHT_GRAY,
+     BLUE, YELLOW, MAGENTA, WHITE,
      BLACK,
 
-     BLACK,      BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BLACK,
-     BRIGHT_RED, BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_CYAN,  YELLOW,
-                 BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_RED,   BRIGHT_RED,
-     BLACK,      BRIGHT_CYAN,  BRIGHT_CYAN,  BRIGHT_RED,   BRIGHT_RED,   BRIGHT_RED,   BRIGHT_RED,
+     BLACK,  GREEN, GREEN, GREEN, GREEN, BLACK, BLACK,
+     YELLOW, CYAN,  CYAN,  CYAN,  CYAN,  CYAN,  RED,
+             CYAN,  CYAN,  CYAN,  CYAN,  CYAN,  RED,
+     RED,    CYAN,  CYAN,  CYAN,  CYAN,  CYAN,   BLACK,
 
-     DARK_GRAY, BRIGHT_RED, DARK_GRAY, DARK_GRAY,
+     WHITE, MAGENTA,YELLOW, BLUE,
      BLACK),
-
-    [1] = COLORMAP_STACKED
-    (BLACK, GREEN, GREEN, GREEN, GREEN, GREEN, BLUE,
-    MAGENTA, CYAN, CYAN, CYAN, CYAN, CYAN, RED,
-    BROWN, CYAN, CYAN, CYAN, CYAN, CYAN,
-    BROWN, CYAN, CYAN, CYAN, CYAN, CYAN, RED,
-
-    LIGHT_GRAY, RED, LIGHT_GRAY, LIGHT_GRAY,
-    BLACK,
-
-    BLACK, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BLACK,
-    BRIGHT_RED, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, YELLOW,
-    BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_RED, BRIGHT_RED,
-    BLACK, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_RED, BRIGHT_RED, BRIGHT_RED, BRIGHT_RED,
-
-    DARK_GRAY, BRIGHT_RED, DARK_GRAY, DARK_GRAY,
-    BLACK),
-
-    [2] = COLORMAP_STACKED
-    (BLACK, GREEN, GREEN, GREEN, GREEN, GREEN, BLUE,
-    MAGENTA, CYAN, CYAN, CYAN, CYAN, CYAN, RED,
-    BROWN, CYAN, CYAN, CYAN, CYAN, CYAN,
-    BROWN, CYAN, CYAN, CYAN, CYAN, CYAN, RED,
-
-    LIGHT_GRAY, RED, LIGHT_GRAY, LIGHT_GRAY,
-    BLACK,
-
-    BLACK, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BRIGHT_GREEN, BLACK,
-    BRIGHT_RED, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, YELLOW,
-    BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_RED, BRIGHT_RED,
-    BLACK, BRIGHT_CYAN, BRIGHT_CYAN, BRIGHT_RED, BRIGHT_RED, BRIGHT_RED, BRIGHT_RED,
-
-    DARK_GRAY, BRIGHT_RED, DARK_GRAY, DARK_GRAY,
-    BLACK))
+)
 
 /* Re-enable astyle's indent enforcement */
 // clang-format on
@@ -281,26 +251,11 @@ void hostPowerManagementEventHandler(kaleidoscope::plugin::HostPowerManagement::
     toggleLedsOnSuspendResume(event);
 }
 
-// First, tell Kaleidoscope which plugins you want to use.
-// The order can be important. For example, LED effects are
-// added in the order they're listed here.
 KALEIDOSCOPE_INIT_PLUGINS(
-    // The EEPROMSettings & EEPROMKeymap plugins make it possible to have an
-    // editable keymap in EEPROM.
     EEPROMSettings,
     EEPROMKeymap,
-
-    // Focus allows bi-directional communication with the host, and is the
-    // interface through which the keymap in EEPROM can be edited.
     Focus,
-
-    // FocusSettingsCommand adds a few Focus commands, intended to aid in
-    // changing some settings of the keyboard, such as the default layer (via the
-    // `settings.defaultLayer` command)
     FocusSettingsCommand,
-
-    // FocusEEPROMCommand adds a set of Focus commands, which are very helpful in
-    // both debugging, and in backing up one's EEPROM contents.
     FocusEEPROMCommand,
 
     // The boot greeting effect pulses the LED button for 10 seconds after the
@@ -339,10 +294,6 @@ KALEIDOSCOPE_INIT_PLUGINS(
 
     funColor);
 
-/** The 'setup' function is one of the two standard Arduino sketch functions.
- * It's called when your keyboard first powers up. This is where you set up
- * Kaleidoscope and any plugins.
- */
 void setup()
 {
     // First, call Kaleidoscope's internal setup function
@@ -352,9 +303,6 @@ void setup()
     // nice green color.
     BootGreetingEffect.hue = 85;
 
-    // We want to make sure that the firmware starts with LED effects off
-    // This avoids over-taxing devices that don't have a lot of power to share
-    // with USB devices
     LEDOff.activate();
 
     // To make the keymap editable without flashing new firmware, we store
@@ -367,17 +315,10 @@ void setup()
     // We need to tell the Colormap plugin how many layers we want to have custom
     // maps for. To make things simple, we set it to eight layers, which is how
     // many editable layers we have (see above).
-    ColormapEffect.max_layers(8);
+    ColormapEffect.max_layers(1);
     ColormapEffect.activate();
     DefaultColormap.setup();
 }
-
-/** loop is the second of the standard Arduino sketch functions.
- * As you might expect, it runs in a loop, never exiting.
- *
- * For Kaleidoscope-based keyboard firmware, you usually just want to
- * call Kaleidoscope.loop(); and not do anything custom here.
- */
 
 void loop()
 {
