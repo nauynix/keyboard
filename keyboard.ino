@@ -28,6 +28,22 @@ enum
     FUNCTION,
 }; // layers
 
+enum
+{
+    F11
+}; // macros
+
+const macro_t *macroAction(uint8_t macroIndex, KeyEvent &event) {
+  if (macroIndex == F11) {
+    if (!keyToggledOff(event.state))
+      return MACRO_NONE;
+    return MACRO(T(F11));
+  }
+
+  return MACRO_NONE;
+}
+
+
 #define Key_EXCLM LSHIFT(Key_1)
 #define Key_AT LSHIFT(Key_2)
 #define Key_HASH LSHIFT(Key_3)
@@ -60,9 +76,6 @@ enum
 
 void tapDanceAction(uint8_t tapDanceIndex, KeyAddr key_addr, uint8_t tapCount, kaleidoscope::plugin::TapDance::ActionType tapDanceAction)
 {
-    // if (tapDanceAction == kaleidoscope::plugin::TapDance::Release)
-    //     xinyuan::TapDance::cancelOneShot = true;
-
     switch (tapDanceIndex)
     {
     case LPB:
@@ -93,7 +106,7 @@ void tapDanceAction(uint8_t tapDanceIndex, KeyAddr key_addr, uint8_t tapCount, k
 KEYMAPS(
 
   [PRIMARY] = KEYMAP_STACKED
-  (Key_F11,         ___,            Key_EXCLM,      Key_AT    , Key_HASH,   Key_DOLLR,  TD(COPY),
+  (M(F11),         ___,            Key_EXCLM,      Key_AT    , Key_HASH,   Key_DOLLR,  TD(COPY),
    Key_Backtick,    Key_Quote,      Key_Comma,      Key_Period, Key_P,      Key_Y,      TD(LPB),
    Key_Tab,         Key_A,          Key_O,          Key_E,      Key_U,      Key_I,
    ___,             Key_Semicolon,  Key_Q,          Key_J,      Key_K,      Key_X,      Key_Slash,
@@ -101,10 +114,10 @@ KEYMAPS(
    OSM(LeftControl), Key_Backspace,  OSM(LeftShift),  Key_Escape,
    OSL(FUNCTION),
 
-   ___,         Key_PRCNT,  Key_CARET,Key_AND,Key_STAR, ___,     ___,
-   TD(RPB),     Key_F,      Key_G, Key_C,   Key_R,      Key_L,      Key_Backslash,
-                Key_D,      Key_H, Key_T,   Key_N,      Key_S,      Key_Equals,
-   Key_Minus,   Key_B,      Key_M, Key_W,   Key_V,      Key_Z,      ___,
+   ___,             Key_PRCNT,  Key_CARET,  Key_AND,    Key_STAR,   ___,     ___,
+   TD(RPB),         Key_F,      Key_G,      Key_C,      Key_R,      Key_L,   Key_Minus,
+                    Key_D,      Key_H,      Key_T,      Key_N,      Key_S,   Key_Equals,
+   Key_Backslash,   Key_B,      Key_M,      Key_W,      Key_V,      Key_Z,   ___,
 
    Key_LeftGui, Key_Enter,  Key_Spacebar,   OSM(LeftAlt),
    OSL(NUMPAD)),
@@ -189,6 +202,8 @@ KALEIDOSCOPE_INIT_PLUGINS(
     LEDControl,
 
     funColor,
+
+    Macros,
 
     // The MouseKeys plugin lets you add keys to your keymap which move the mouse.
     MouseKeys,
