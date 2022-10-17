@@ -65,10 +65,6 @@ void tapDanceAction(uint8_t tapDanceIndex, KeyAddr key_addr, uint8_t tapCount, k
 
     switch (tapDanceIndex)
     {
-    case PBS:
-        return tapDanceActionKeys(tapCount, tapDanceAction,
-                                  Key_Pipe,
-                                  Key_Backslash);
     case LPB:
         return tapDanceActionKeys(tapCount, tapDanceAction,
                                   Key_LeftParen,
@@ -79,23 +75,16 @@ void tapDanceAction(uint8_t tapDanceIndex, KeyAddr key_addr, uint8_t tapCount, k
                                   Key_RightParen,
                                   Key_RightBracket,
                                   Key_RCB);
-
-    case MNP:
-        return tapDanceActionKeys(tapCount, tapDanceAction,
-                                  Consumer_ScanNextTrack,
-                                  Consumer_ScanPreviousTrack);
-
-    case VOLD:
-        return tapDanceActionKeys(tapCount, tapDanceAction,
-                                  Consumer_VolumeDecrement,
-                                  Consumer_VolumeIncrement,
-                                  Key_Mute);
-
     case COPY:
-        return tapDanceActionKeys(tapCount, tapDanceAction,
+        if (tapDanceAction == kaleidoscope::plugin::TapDance::Hold){
+            return tapDanceActionKeys(tapCount, tapDanceAction,LCTRL(Key_V));
+        } else {
+            return tapDanceActionKeys(tapCount, tapDanceAction,
                                   LCTRL(Key_C),
-                                  LCTRL(Key_V),
                                   LCTRL(Key_X));
+
+        }
+        
     }
 }
 
@@ -107,18 +96,18 @@ KEYMAPS(
   (Key_F11,         ___,            Key_EXCLM,      Key_AT    , Key_HASH,   Key_DOLLR,  TD(COPY),
    Key_Backtick,    Key_Quote,      Key_Comma,      Key_Period, Key_P,      Key_Y,      TD(LPB),
    Key_Tab,         Key_A,          Key_O,          Key_E,      Key_U,      Key_I,
-   TD(VOLD),        Key_Semicolon,  Key_Q,          Key_J,      Key_K,      Key_X,      Key_Slash,
+   ___,             Key_Semicolon,  Key_Q,          Key_J,      Key_K,      Key_X,      Key_Slash,
 
    OSM(LeftControl), Key_Backspace,  OSM(LeftShift),  Key_Escape,
-   ShiftToLayer(FUNCTION),
+   OSL(FUNCTION),
 
    ___,         Key_PRCNT,  Key_CARET,Key_AND,Key_STAR, ___,     ___,
    TD(RPB),     Key_F,      Key_G, Key_C,   Key_R,      Key_L,      Key_Backslash,
                 Key_D,      Key_H, Key_T,   Key_N,      Key_S,      Key_Equals,
    Key_Minus,   Key_B,      Key_M, Key_W,   Key_V,      Key_Z,      ___,
 
-   ___,         Key_Enter,  Key_Spacebar,   OSM(LeftAlt),
-   ShiftToLayer(NUMPAD)),
+   Key_LeftGui, Key_Enter,  Key_Spacebar,   OSM(LeftAlt),
+   OSL(NUMPAD)),
 
 
   [NUMPAD] =  KEYMAP_STACKED
@@ -138,9 +127,9 @@ KEYMAPS(
 
   [FUNCTION] =  KEYMAP_STACKED
   (___,      Key_F1,           Key_F2,      Key_F3,     Key_F4,        Key_F5,           Key_CapsLock,
-   Key_Tab,  ___,              Key_mouseUp, ___,        Key_mouseBtnR, Key_mouseWarpEnd, Key_mouseWarpNE,
-   Key_Home, Key_mouseL,       Key_mouseDn, Key_mouseR, Key_mouseBtnL, Key_mouseWarpNW,
-   Key_End,  Key_PrintScreen,  Key_Insert,  ___,        Key_mouseBtnM, Key_mouseWarpSW,  Key_mouseWarpSE,
+   Key_Tab,  ___,              ___,        Key_mouseUp,___,        Key_mouseWarpEnd, Key_mouseWarpNE,
+   Key_Home, ___,              Key_mouseL, Key_mouseDn, Key_mouseR, Key_mouseWarpNW,
+   Key_End,  Key_PrintScreen,  Key_Insert, ___,        ___,        Key_mouseWarpSW,  Key_mouseWarpSE,
    ___, Key_Delete, ___, ___,
    ___,
 
@@ -186,6 +175,8 @@ FunctionalColor funColor(255, Fruit);
 
 struct myTheme : public colorMapFruit
 {
+    FC_MAP_COLOR(defaultColor, cyan)
+    // FC_MAP_COLOR(modifier, cyan)
     // FC_MAP_COLOR(alpha, cyan)
 };
 
@@ -229,7 +220,7 @@ void setup()
 
     LEDOff.activate();
 
-    // FC_SET_THEME(funColor, myTheme);
+    FC_SET_THEME(funColor, myTheme);
 }
 
 void loop()
