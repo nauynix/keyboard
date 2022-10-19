@@ -19,6 +19,7 @@
 #include <Kaleidoscope-LED-ActiveModColor.h>
 #include <Kaleidoscope-TapDance.h>
 #include "Kaleidoscope-LEDEffect-FunctionalColor.h"
+#include <Kaleidoscope-CharShift.h>
 using namespace kaleidoscope::plugin::LEDFunctionalColor;
 
 enum
@@ -33,16 +34,17 @@ enum
     F11
 }; // macros
 
-const macro_t *macroAction(uint8_t macroIndex, KeyEvent &event) {
-  if (macroIndex == F11) {
-    if (!keyToggledOff(event.state))
-      return MACRO_NONE;
-    return MACRO(T(F11));
-  }
+const macro_t *macroAction(uint8_t macroIndex, KeyEvent &event)
+{
+    if (macroIndex == F11)
+    {
+        if (!keyToggledOff(event.state))
+            return MACRO_NONE;
+        return MACRO(T(F11));
+    }
 
-  return MACRO_NONE;
+    return MACRO_NONE;
 }
-
 
 #define Key_EXCLM LSHIFT(Key_1)
 #define Key_AT LSHIFT(Key_2)
@@ -55,7 +57,9 @@ const macro_t *macroAction(uint8_t macroIndex, KeyEvent &event) {
 #define Key_LCB LSHIFT(Key_LeftBracket)
 #define Key_RCB LSHIFT(Key_RightBracket)
 #define Key_Plus LSHIFT(Key_Equals)
+#define Key_Underscore LSHIFT(Key_Minus)
 #define Key_QMARK LSHIFT(Key_Slash)
+#define Key_PIPE LSHIFT(Key_Backslash)
 
 enum
 {
@@ -79,25 +83,38 @@ void tapDanceAction(uint8_t tapDanceIndex, KeyAddr key_addr, uint8_t tapCount, k
     switch (tapDanceIndex)
     {
     case LPB:
-        return tapDanceActionKeys(tapCount, tapDanceAction,
-                                  Key_LeftParen,
-                                  Key_LeftBracket,
-                                  Key_LCB);
-    case RPB:
-        return tapDanceActionKeys(tapCount, tapDanceAction,
-                                  Key_RightParen,
-                                  Key_RightBracket,
-                                  Key_RCB);
-    case COPY:
-        if (tapDanceAction == kaleidoscope::plugin::TapDance::Hold){
-            return tapDanceActionKeys(tapCount, tapDanceAction,LCTRL(Key_V));
-        } else {
-            return tapDanceActionKeys(tapCount, tapDanceAction,
-                                  LCTRL(Key_C),
-                                  LCTRL(Key_X));
-
+        if (tapDanceAction == kaleidoscope::plugin::TapDance::Hold)
+        {
+            return tapDanceActionKeys(tapCount, tapDanceAction, Key_LCB);
         }
-        
+        else
+        {
+            return tapDanceActionKeys(tapCount, tapDanceAction,
+                                      Key_LeftParen,
+                                      Key_LeftBracket);
+        }
+    case RPB:
+        if (tapDanceAction == kaleidoscope::plugin::TapDance::Hold)
+        {
+            return tapDanceActionKeys(tapCount, tapDanceAction, Key_RCB);
+        }
+        else
+        {
+            return tapDanceActionKeys(tapCount, tapDanceAction,
+                                      Key_RightParen,
+                                      Key_RightBracket);
+        }
+    case COPY:
+        if (tapDanceAction == kaleidoscope::plugin::TapDance::Hold)
+        {
+            return tapDanceActionKeys(tapCount, tapDanceAction, LCTRL(Key_V));
+        }
+        else
+        {
+            return tapDanceActionKeys(tapCount, tapDanceAction,
+                                      LCTRL(Key_C),
+                                      LCTRL(Key_X));
+        }
     }
 }
 
@@ -106,20 +123,20 @@ void tapDanceAction(uint8_t tapDanceIndex, KeyAddr key_addr, uint8_t tapCount, k
 KEYMAPS(
 
   [PRIMARY] = KEYMAP_STACKED
-  (M(F11),         ___,            Key_EXCLM,      Key_AT    , Key_HASH,   Key_DOLLR,  TD(COPY),
+  (M(F11),          Key_QMARK,      Key_Underscore, Key_AT    , Key_HASH,   Key_DOLLR,  TD(COPY),
    Key_Backtick,    Key_Quote,      Key_Comma,      Key_Period, Key_P,      Key_Y,      TD(LPB),
    Key_Tab,         Key_A,          Key_O,          Key_E,      Key_U,      Key_I,
-   ___,             Key_Semicolon,  Key_Q,          Key_J,      Key_K,      Key_X,      Key_Slash,
+   Key_Backslash,   Key_Semicolon,  Key_Q,          Key_J,      Key_K,      Key_X,      ___,
 
    OSM(LeftControl), Key_Backspace,  OSM(LeftShift),  Key_Escape,
    OSL(FUNCTION),
 
-   ___,             Key_PRCNT,  Key_CARET,  Key_AND,    Key_STAR,   ___,     ___,
-   TD(RPB),         Key_F,      Key_G,      Key_C,      Key_R,      Key_L,   Key_Minus,
-                    Key_D,      Key_H,      Key_T,      Key_N,      Key_S,   Key_Equals,
-   Key_Backslash,   Key_B,      Key_M,      Key_W,      Key_V,      Key_Z,   ___,
+   ___,     ___,        Key_PRCNT,  Key_CARET,  Key_AND,    Key_PIPE,Key_STAR, 
+   TD(RPB), Key_F,      Key_G,      Key_C,      Key_R,      Key_L,   Key_Plus,
+            Key_D,      Key_H,      Key_T,      Key_N,      Key_S,   Key_Minus,
+   ___,     Key_B,      Key_M,      Key_W,      Key_V,      Key_Z,   Key_Slash,
 
-   Key_LeftGui, Key_Enter,  Key_Spacebar,   OSM(LeftAlt),
+   Key_LeftGui, CS(0),  CS(1),   OSM(LeftAlt),
    OSL(NUMPAD)),
 
 
@@ -139,18 +156,18 @@ KEYMAPS(
    ___),
 
   [FUNCTION] =  KEYMAP_STACKED
-  (___,      Key_F1,           Key_F2,      Key_F3,     Key_F4,        Key_F5,           Key_CapsLock,
-   Key_Tab,  ___,              ___,        Key_mouseUp,___,        Key_mouseWarpEnd, Key_mouseWarpNE,
-   Key_Home, ___,              Key_mouseL, Key_mouseDn, Key_mouseR, Key_mouseWarpNW,
-   Key_End,  Key_PrintScreen,  Key_Insert, ___,        ___,        Key_mouseWarpSW,  Key_mouseWarpSE,
-   ___, Key_Delete, ___, ___,
+  (___, Key_F1, Key_F2,     Key_F3,         Key_F4,         Key_F5, ___,
+   ___, ___, ___,           Key_UpArrow,    ___,            ___,    ___,
+   ___, ___, Key_LeftArrow, Key_DownArrow,  Key_RightArrow, ___,
+   ___, ___, ___,           ___,            ___,            ___,    ___,
+   ___, ___, ___,           ___,
    ___,
 
    Consumer_ScanPreviousTrack, Key_F6,                 Key_F7,                   Key_F8,                   Key_F9,          Key_F10,          Key_F11,
-   Consumer_PlaySlashPause,    Consumer_ScanNextTrack, Key_LeftCurlyBracket,     Key_UpArrow,              Key_LeftBracket, Key_RightBracket, Key_F12,
+   Consumer_PlaySlashPause,    Consumer_ScanNextTrack, ___,                      Key_UpArrow,              ___,             ___,              Key_F12,
                                ___,                    Key_LeftArrow,            Key_DownArrow,            Key_RightArrow,  ___,              ___,
-   Key_PcApplication,          Consumer_Mute,          Consumer_VolumeDecrement, Consumer_VolumeIncrement, ___,             Key_Backslash,    Key_Pipe,
-   ___, ___, Key_Enter, ___,
+   Key_PcApplication,          Consumer_Mute,          Consumer_VolumeDecrement, Consumer_VolumeIncrement, ___,             ___,              ___,
+   ___, ___, ___, ___,
    ___)
 )
 
@@ -222,6 +239,7 @@ KALEIDOSCOPE_INIT_PLUGINS(
     IdleLEDs,
 
     ActiveModColorEffect,
+    CharShift,
     TapDance);
 
 void setup()
@@ -236,6 +254,11 @@ void setup()
     LEDOff.activate();
 
     FC_SET_THEME(funColor, myTheme);
+
+    CS_KEYS(
+        kaleidoscope::plugin::CharShift::KeyPair(Key_Enter, Key_EXCLM),
+        kaleidoscope::plugin::CharShift::KeyPair(Key_Spacebar, Key_Equals), 
+    );
 }
 
 void loop()
