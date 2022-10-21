@@ -126,15 +126,15 @@ KEYMAPS(
   (M(F11),          Key_QMARK,      Key_Underscore, Key_AT    , Key_HASH,   Key_DOLLR,  TD(COPY),
    Key_Backtick,    Key_Quote,      Key_Comma,      Key_Period, Key_P,      Key_Y,      TD(LPB),
    Key_Tab,         Key_A,          Key_O,          Key_E,      Key_U,      Key_I,
-   Key_Backslash,   Key_Semicolon,  Key_Q,          Key_J,      Key_K,      Key_X,      ___,
+   Key_Slash,   Key_Semicolon,  Key_Q,          Key_J,      Key_K,      Key_X,      ___,
 
    OSM(LeftControl), Key_Backspace,  OSM(LeftShift),  Key_Escape,
    OSL(FUNCTION),
 
    ___,     ___,        Key_PRCNT,  Key_CARET,  Key_AND,    Key_PIPE,Key_STAR, 
-   TD(RPB), Key_F,      Key_G,      Key_C,      Key_R,      Key_L,   Key_Plus,
-            Key_D,      Key_H,      Key_T,      Key_N,      Key_S,   Key_Minus,
-   ___,     Key_B,      Key_M,      Key_W,      Key_V,      Key_Z,   Key_Slash,
+   TD(RPB), Key_F,      Key_G,      Key_C,      Key_R,      Key_L,   Key_Backslash,
+            Key_D,      Key_H,      Key_T,      Key_N,      Key_S,   Key_Equals,
+   ___,     Key_B,      Key_M,      Key_W,      Key_V,      Key_Z,   Key_Minus,
 
    Key_LeftGui, CS(0),  CS(1),   OSM(LeftAlt),
    OSL(NUMPAD)),
@@ -156,7 +156,7 @@ KEYMAPS(
    ___),
 
   [FUNCTION] =  KEYMAP_STACKED
-  (___, Key_F1, Key_F2,     Key_F3,         Key_F4,         Key_F5, ___,
+  (___, Key_F1, Key_F2,     Key_F3,         Key_F4,         Key_F5, Key_ScrollLock,
    ___, ___, ___,           Key_UpArrow,    ___,            ___,    ___,
    ___, ___, Key_LeftArrow, Key_DownArrow,  Key_RightArrow, ___,
    ___, ___, ___,           ___,            ___,            ___,    ___,
