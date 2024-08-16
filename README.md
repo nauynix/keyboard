@@ -1,3 +1,5 @@
+### Deprecated because of chrysalis. Access chrysalis.keyboard.io instead
+
 # keyboard
 Keyboardio Model100 firmware
 This is a [Dvorak][dvorak]-inspired layout, with some changes here and there, to make it more suited for programming, and for a non-traditional keyboard.
